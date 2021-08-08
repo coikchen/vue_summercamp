@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://unpkg.com/vue@next"></script>
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-beta1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+  <title>Hello, world!</title>
+</head>
+
+
+<body class="d-flex vw-100 vh-100 align-items-center justify-content-center">
+
+  <div id="app">
+
+    <div class="row">
+      <div class="mb-3 col-6">
+        <label for="input1" class="form-label">第一組數字</label>
+        <input v-model.number="num1" type="number" class="form-control" id="input1">
+      </div>
+      <div class="mb-3 col-6">
+        <label for="input2" class="form-label">第二組數字</label>
+        <input v-model.number="num2" type="number" class="form-control" id="input2">
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-3">
+        <div class="btn btn-outline-info w-100" :class="{ active : operater === '+'}" @click="operater = '+'">+</div>
+      </div>
+      <div class="col-3">
+        <div class="btn btn-outline-info w-100" :class="{ active : operater === '-'}" @click="operater = '-'">-</div>
+      </div>
+      <div class="col-3">
+        <div class="btn btn-outline-info w-100" :class="{ active : operater === '*'}" @click="operater = '*'">*</div>
+      </div>
+      <div class="col-3">
+        <div class="btn btn-outline-info w-100" :class="{ active : operater === '/'}" @click="operater = '/'">÷</div>
+      </div>
+    </div>
+
+
+
+    <div class="btn btn-info w-100 mb-3" @click=calc_ans()>let's go</div>
+
+    <input v-model.number="total" type="number" class="form-control mb-3">
+   
+    <div class="row">
+    <div class="col-8"><ul>
+      <li v-for="(item,key) in items" :key="key">{{item}}</li>
+    </ul></div>
+    <div class="col-4"> <div class="btn btn-outline-danger w-100 mb-3" @click=clear_localStorage()>clear</div></div>
+  </div>
+    
+  </div>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          num1: '',
+          num2: '',
+          total: 0,
+          operater: '',
+          items: [],
+        }
+      },
+      mounted() {
+        this.get_localStorage()
+      },
+      methods: {
+        calc_ans() {
+          if ((this.operater) == '+') {
+            this.total = this.num1 + this.num2
+          } else if ((this.operater) == '-') {
+            this.total = this.num1 - this.num2
+          } else if ((this.operater) == '*') {
+            this.total = this.num1 * this.num2
+          } else if ((this.operater) == '/') {
+            this.total = this.num1 / this.num2
+          }
+          this.add_toarray()
+          this.set_localStorage()
+          this.reset()
+        },
+        add_toarray() {
+          str = `${this.total} = ${this.num1} ${this.operater} ${this.num2}`
+          this.items.push(str)
+          if (this.items.length > 10) {
+            this.items.splice(0, 1)
+          }
+        },
+        set_localStorage() {
+          localStorage.setItem('history', JSON.stringify(this.items))
+        },
+        get_localStorage() {
+          this.items = JSON.parse(localStorage.getItem('history')) || []
+        },
+        clear_localStorage() {
+          this.items.length = 0
+          localStorage.removeItem('history');
+        },
+        reset() {
+          this.num1 = '',
+            this.num2 = ''
+            // this.total = ''
+        }
+      },
+
+    }).mount('#app')
+  </script>
+
+</body>
+
+</html>
